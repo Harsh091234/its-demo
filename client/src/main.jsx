@@ -4,10 +4,17 @@ import {BrowserRouter} from "react-router-dom"
 import './index.css'
 import App from './App.jsx'
 import { Toaster } from 'react-hot-toast'
+import { UserProvider } from './context/UserContext.jsx'
+import { PostProvider } from './context/PostContext.jsx'
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <UserProvider>
+        <PostProvider>
+          <App />
+        </PostProvider>
+      </UserProvider>
+
       <Toaster position="top-center" reverseOrder={false} />
     </BrowserRouter>
   </StrictMode>

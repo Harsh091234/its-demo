@@ -1,10 +1,17 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Home, Bell, User, LogOut, Menu, X } from "lucide-react";
 
-const Navbar = ({ handleLogout }) => {
+const Navbar = () => {
+  
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-
+const handleLogout = () => {
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userId");
+  navigate("/login");
+  
+};
   return (
     <nav className="sticky top-0 z-50 bg-stone-950 border-b border-stone-800 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

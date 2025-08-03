@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { Loader, Lock, Mail } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import Input from "../components/Input";
-import { motion } from "framer-motion";
+
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useUser } from "../context/UserContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -24,21 +26,24 @@ const Login = () => {
         data
       );
       console.log("data: ", response.data);
-      if (response.data.success) {
-        const { token } = response.data;
+     if (response.data.success) {
+       const { token} = response.data;
 
-        console.log("token", token);
-        localStorage.setItem("authToken", token);
+       localStorage.setItem("authToken", token);
+ 
+            await fetchUser(); 
+       // Reset values
+       setEmail("");
+       setPassword("");
 
-        //reset values
-        setEmail("");
-        setPassword("");
+  
+    
+     
 
-        toast.success("User authenticated successfully");
-        navigate("/");
-      } else {
-        toast.error("Invalid Email or Password");
-      }
+       toast.success("User authenticated successfully");
+       navigate("/");
+     }
+
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong. Please try again.");

@@ -1,61 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Avatar from "../components/ui/Avatar";
 import { CalendarDays, MapPin, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import EditProfileModal from "../components/modals/EditProfileModal";
+import { usePosts } from "../context/PostContext";
+import { useUser } from "../context/UserContext";
 
 const Profile = () => {
-  const favatarSrc = "https://randomuser.me/api/portraits/men/22.jpg";
-  const fullName = "Harsh Sharma";
-  const username = "harsh_dev";
-  const bio = "Passionate full-stack developer building cool web apps.";
-  const website = "https://harsh.dev";
-  const location = "New Delhi, India";
-  const joinedDate = "August 2023";
+    const { myPosts, ownPostsLoading, fetchOwnPosts } = usePosts();
+       const { user, loading } = useUser();
     const [showEditModal, setShowEditModal] = useState(false);
 
-  // Sample posts (you can fetch these from backend in real apps)
-  const posts = [
-    {
-      content: "Just launched my portfolio website! 🚀 Check it out.",
-      timestamp: "2h ago",
-    },
-    {
-      content: "Exploring React 19 beta and it’s amazing! 💻",
-      timestamp: "1d ago",
-    },
-    {
-      content: "Deployed my new MERN app on Vercel! 🔥",
-      timestamp: "3d ago",
-    },
-  ];
+   useEffect(() => {
+     fetchOwnPosts(); 
+   }, []);
 
+   if (loading) {
+     return <div className="text-white">Loading...</div>;
+   }
+
+   
+   if (!user) {
+     return <div className="text-white">User not found</div>;
+   }
+
+ 
   return (
     <div className="pt-7 px-4 w-full flex flex-col items-center space-y-8">
-      {/* Profile Card */}
       <div className="w-full max-w-3xl border border-stone-800 rounded-2xl shadow-xl bg-stone-950 p-10 text-white">
-        {/* Avatar */}
         <div className="flex justify-center mb-6">
           <Avatar
-            src={favatarSrc}
-            name={fullName}
+            src={"https://randomuser.me/api/portraits/men/22.jpg"}
+            name={user.fullname}
             showName={false}
             size="2xl"
             status="online"
           />
         </div>
 
-        {/* Name & Username */}
         <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold">{fullName}</h2>
-          <p className="text-sm text-stone-400 mt-1">@{username}</p>
+          <h2 className="text-2xl font-bold">{user.fullname}</h2>
+          <p className="text-sm text-stone-400 mt-1">{user.username}</p>
         </div>
 
-        {/* Bio */}
-        <p className="text-base text-stone-300 text-center mb-6">{bio}</p>
+        <p className="text-base text-stone-300 text-center mb-6">{user.bio}</p>
 
-        {/* Edit Profile Button */}
         <div className="text-center mb-8">
           <button
             onClick={() => setShowEditModal(!showEditModal)}
@@ -67,53 +57,60 @@ const Profile = () => {
           <EditProfileModal
             isOpen={showEditModal}
             onClose={() => setShowEditModal(!showEditModal)}
-            initialData={{ fullName, website, bio }}
+            initialData={{
+              fullname: user.fullname,
+              website: user.website,
+              bio: user.bio,
+            }}
           />
         </div>
 
-        {/* Info Section */}
         <div className="flex flex-col space-y-4 text-sm text-stone-300">
-          {/* Location */}
           <div className="flex items-center space-x-3">
             <MapPin className="w-5 h-5 text-blue-400" />
-            <span>{location}</span>
+            <span>{user.location}</span>
           </div>
 
-          {/* Website */}
           <div className="flex items-center space-x-3">
             <Globe className="w-5 h-5 text-blue-400" />
             <Link
-              to={website}
+              to={user.website}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:underline break-all"
             >
-              {website}
+              {user.website}
             </Link>
           </div>
 
-          {/* Joined */}
           <div className="flex items-center space-x-3">
             <CalendarDays className="w-5 h-5 text-blue-400" />
-            <span>Joined {joinedDate}</span>
+            <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
       </div>
 
-      {/* My Posts Section */}
       <div className="w-full max-w-3xl space-y-4 text-white">
         <h2 className="text-xl font-semibold mb-2">Posts</h2>
-        {posts.map((post, index) => (
-          <PostCard
-            key={index}
-            favatarSrc={favatarSrc}
-            fullName={fullName}
-            username={username}
-            content={post.content}
-            status="online"
-            timestamp={post.timestamp}
-          />
-        ))}
+        {ownPostsLoading ? (
+          <p>Loading your posts...</p>
+        ) : myPosts.length > 0 ? (
+          myPosts.map((post) => (
+            <PostCard
+              key={post._id}
+              favatarSrc={"https://randomuser.me/api/portraits/men/22.jpg"}
+              fullName={user.fullname}
+              username={user.username}
+              content={post.content}
+              status="online"
+              timestamp={post.timestamp}
+            />
+          ))
+        ) : (
+          <p className="text-sm text-stone-400">
+            You haven’t posted anything yet.
+          </p>
+        )}
       </div>
     </div>
   );

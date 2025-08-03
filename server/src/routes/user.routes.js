@@ -1,8 +1,8 @@
 import express from "express";
-import {getDetails} from "../controllers/user.controllers.js"
-
+import {getUser} from "../controllers/user.controller.js"
+import verifyToken from "../middlewares/auth.middleware.js";
 const router = express.Router();
 
-router.get("/getdetails", getDetails);
+router.get("/getuser",verifyToken, getUser);
 
 export default router;

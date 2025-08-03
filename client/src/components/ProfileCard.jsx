@@ -26,7 +26,7 @@ const ProfileCard = ({
       {/* Full Name and Username */}
       <div className="text-center mb-6">
         <h2 className="text-xl font-semibold">{fullName}</h2>
-        <p className="text-md text-stone-400 mt-1">@{username}</p>
+        <p className="text-md text-stone-400 mt-1">{username}</p>
       </div>
 
       {/* Bio */}
@@ -40,7 +40,7 @@ const ProfileCard = ({
         </div>
         <div className="flex items-center space-x-3">
           <CalendarDays className="w-5 h-5 text-blue-400" />
-          <span>Joined {joinedDate}</span>
+          <span>Joined since {joinedDate}</span>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ import Avatar from "./ui/Avatar";
           />
           <div className="flex flex-col ">
             <span className="text-base font-semibold -mb-1">{fullName}</span>
-            <span className="text-sm text-stone-400">@{username}</span>
+            <span className="text-sm text-stone-400">{username}</span>
           </div>
         </div>
 

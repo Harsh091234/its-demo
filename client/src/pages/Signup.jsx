@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useUser } from "../context/UserContext"; 
 
 const Signup = () => {
   const navigate = useNavigate();
+  const { fetchUser } = useUser(); 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullname, setFullName] = useState("");
@@ -30,7 +32,7 @@ const Signup = () => {
         
        
         localStorage.setItem("authToken", token);
-
+            await fetchUser();
         //reset values
         setEmail("")
          setPassword("");
