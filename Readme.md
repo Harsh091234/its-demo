@@ -2,6 +2,10 @@
 
 A modern, full-stack social media application built with React and Node.js, featuring real-time interactions, user authentication, and a sleek UI.
 
+## 🚀 Live Preview
+
+**Demo URL:** [https://its-demo-rose.vercel.app/](https://its-demo-rose.vercel.app/)
+
 ## ✨ Features
 
 - 🔐 **Secure Authentication** - User registration and login with JWT
