@@ -31,7 +31,7 @@ const Login = () => {
 
        localStorage.setItem("authToken", token);
  
-            await fetchUser(); 
+           
        // Reset values
        setEmail("");
        setPassword("");

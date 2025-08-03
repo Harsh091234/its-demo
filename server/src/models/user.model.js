@@ -20,14 +20,18 @@ const userSchema = mongoose.Schema(
     },
     username: {
       type: String,
-      required: true
-      
+      required: true,
     },
     bio: {
       type: String,
     },
+    website: String,
 
-    picture: String,
+    avatar: {
+      type: String,
+      default:
+        "https://ts3.mm.bing.net/th?id=OIP.ItvA9eX1ZIYT8NHePqeuCgHaHa&pid=15.1",
+    },
     lastLogin: Date,
 
     provider: { type: String, default: "local" },

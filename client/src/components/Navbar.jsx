@@ -30,13 +30,13 @@ const handleLogout = () => {
               <Home className="size-4 mr-1" />
               <span className="hidden sm:inline">Home</span>
             </Link>
-            <Link
+            {/* <Link
               to="/notifications"
               className="text-stone-300 text-sm hover:text-blue-400 flex items-center font-semibold"
             >
               <Bell className="size-4 mr-1" />
               <span className="hidden sm:inline">Notifications</span>
-            </Link>
+            </Link> */}
             <Link
               to="/profile"
               className="text-stone-300 text-sm hover:text-blue-400 flex items-center font-semibold"
@@ -77,14 +77,14 @@ const handleLogout = () => {
               <Home className="size-4 mr-2" />
               Home
             </Link>
-            <Link
+            {/* <Link
               to="/notifications"
               className="flex items-center text-sm hover:text-blue-400 font-semibold"
               onClick={() => setIsOpen(false)}
             >
               <Bell className="size-4 mr-2" />
               Notifications
-            </Link>
+            </Link> */}
             <Link
               to="/profile"
               className="flex items-center text-sm hover:text-blue-400 font-semibold"

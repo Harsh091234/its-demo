@@ -18,3 +18,37 @@ export const getUser = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+
+export const editUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+     const { fullname, bio, website, location, avatar } = req.body;
+    if (req.userId.toString() !== id) {
+      return res.status(403).json({ success: false, message: "Forbidden" });
+    }
+
+    
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          ...(fullname && { fullname }),
+          ...(bio && { bio }),
+          ...(website && { website }),
+          ...(location && { location }),
+          ...(avatar && { avatar }),
+        },
+      },
+      { new: true }
+    );
+
+if (!updatedUser) {
+  return res.status(404).json({ success: false, message: "User not found" });
+}
+    res.status(200).json({ success: true, message: "User updated", updatedUser });
+  } catch (err) {
+    console.error("editUserById error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

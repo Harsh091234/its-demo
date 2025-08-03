@@ -6,6 +6,7 @@ import {
   getOtherUserPosts,
   deletePost,
   editPost,
+  toggleLikePost,
 } from "../controllers/post.controller.js";
 const router = express.Router();
 
@@ -15,5 +16,8 @@ router.get("/getposts", verifyToken, getPosts);
 router.get("/getotherusersposts", verifyToken, getOtherUserPosts);
 router.delete("/deletepost/:id", verifyToken, deletePost);
 router.put("/editpost/:id", verifyToken, editPost);
+
+router.post("/likeposts/:id", verifyToken, toggleLikePost);
+
 
 export default router;

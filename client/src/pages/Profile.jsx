@@ -1,18 +1,47 @@
 import React, { useEffect, useState } from "react";
 import Avatar from "../components/ui/Avatar";
 import { CalendarDays, MapPin, Globe } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PostCard from "../components/PostCard";
 import EditProfileModal from "../components/modals/EditProfileModal";
 import { usePosts } from "../context/PostContext";
-import { useUser } from "../context/UserContext";
-
+import { useUser } from "../context/UserContext"
+import axios from "axios";
 const Profile = () => {
-    const { myPosts, ownPostsLoading, fetchOwnPosts } = usePosts();
+  
+    const { myPosts, ownPostsLoading, fetchOwnPosts, deletePost } = usePosts();
        const { user, loading } = useUser();
     const [showEditModal, setShowEditModal] = useState(false);
-
-   useEffect(() => {
+  
+    const handleDeletePost = async (postId) => {
+    const res = await deletePost(postId);
+    if (res.success) {
+       fetchOwnPosts();
+    } else {
+      alert("Failed to delete post");
+    }
+  };
+  const handleToggleLike = async (postId) => {
+    try {
+        const token = localStorage.getItem("authToken");
+        console.log(token);
+     const res = await axios.post(
+       `${import.meta.env.VITE_API_URI}/likeposts/${postId}`,
+       {},
+       {
+         headers: {
+           Authorization: `Bearer ${token}`,
+         },
+       }
+     );
+      if (res.data.success) {
+        fetchOwnPosts();
+      }
+    } catch (err) {
+      console.error("Like failed", err.message);
+    }
+  };
+  useEffect(() => {
      fetchOwnPosts(); 
    }, []);
 
@@ -31,7 +60,7 @@ const Profile = () => {
       <div className="w-full max-w-3xl border border-stone-800 rounded-2xl shadow-xl bg-stone-950 p-10 text-white">
         <div className="flex justify-center mb-6">
           <Avatar
-            src={"https://randomuser.me/api/portraits/men/22.jpg"}
+            src={user?.avatar}
             name={user.fullname}
             showName={false}
             size="2xl"
@@ -39,9 +68,9 @@ const Profile = () => {
           />
         </div>
 
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold">{user.fullname}</h2>
-          <p className="text-sm text-stone-400 mt-1">{user.username}</p>
+        <div className="text-center mb-3">
+          <h2 className="text-xl font-bold">{user.fullname}</h2>
+          <p className="text-sm text-stone-400 ">{user.username}</p>
         </div>
 
         <p className="text-base text-stone-300 text-center mb-6">{user.bio}</p>
@@ -61,17 +90,19 @@ const Profile = () => {
               fullname: user.fullname,
               website: user.website,
               bio: user.bio,
+              location: user.location,
+              picture: user.avatar, 
             }}
           />
         </div>
 
-        <div className="flex flex-col space-y-4 text-sm text-stone-300">
+        <div className="flex flex-col space-y-2 text-sm text-stone-300">
           <div className="flex items-center space-x-3">
             <MapPin className="w-5 h-5 text-blue-400" />
             <span>{user.location}</span>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 text-stone-300">
             <Globe className="w-5 h-5 text-blue-400" />
             <Link
               to={user.website}
@@ -79,7 +110,7 @@ const Profile = () => {
               rel="noopener noreferrer"
               className="hover:underline break-all"
             >
-              {user.website}
+             {user.website}
             </Link>
           </div>
 
@@ -96,14 +127,20 @@ const Profile = () => {
           <p>Loading your posts...</p>
         ) : myPosts.length > 0 ? (
           myPosts.map((post) => (
-            <PostCard
+            <PostCard 
               key={post._id}
-              favatarSrc={"https://randomuser.me/api/portraits/men/22.jpg"}
+              favatarSrc={user.avatar}
               fullName={user.fullname}
               username={user.username}
               content={post.content}
+              postId={post._id}
+              onDelete={handleDeletePost}
               status="online"
               timestamp={post.timestamp}
+              canDelete={post.author === user._id}
+              likedByUser={post.likes.includes(user._id)}
+              likesCount={post.likes.length}
+              onToggleLike={handleToggleLike}
             />
           ))
         ) : (

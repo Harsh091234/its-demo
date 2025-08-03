@@ -119,3 +119,33 @@ export const editPost = async (req, res) => {
        res.status(500).json({ success: false, message: "Error editing post" });
      }
 };
+
+export const toggleLikePost = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const post = await Post.findById(req.params.id);
+
+    if (!post)
+      return res
+        .status(404)
+        .json({ success: false, message: "Post not found" });
+
+    const hasLiked = post.likes.includes(userId);
+    if (hasLiked) {
+      post.likes.pull(userId); 
+    } else {
+      post.likes.push(userId);
+    }
+
+    await post.save();
+
+    res.status(200).json({
+      success: true,
+      liked: !hasLiked,
+      likesCount: post.likes.length,
+    });
+  } catch (err) {
+    console.error("Like failed", err.message);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

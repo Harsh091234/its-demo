@@ -8,10 +8,22 @@ import Avatar from "./ui/Avatar";
     username,
     content,
     status = "online",
+    onDelete = () => {},
+    postId,
+    canDelete = false,
+    likedByUser,
+    likesCount,
+    onToggleLike = () => {},
   }) => {
+    const handleDeleteClick = () => {
+      onDelete?.(postId); 
+    };
+    const handleLikeClick = () => {
+      onToggleLike?.(postId); 
+    };
+
     return (
-      <div className="border border-stone-800 rounded-xl p-6 text-white shadow w-full">
-        {/* Top: Avatar + User Info */}
+      <div className="border border-stone-800 rounded-xl p-6 text-white shadow w-full"> 
         <div className="flex items-start space-x-4 mb-4">
           <Avatar
             src={favatarSrc}
@@ -26,19 +38,33 @@ import Avatar from "./ui/Avatar";
           </div>
         </div>
 
-        {/* Post Content */}
         <p className="text-sm text-stone-300 mb-5 leading-relaxed">{content}</p>
 
-        {/* Actions: Like & Delete */}
+       
         <div className="flex justify-between items-center">
-          <button className="flex items-center text-stone-400 hover:text-red-500 transition text-sm">
-            <Heart className="w-3 h-3 mr-2" />
-            <span>Like</span>
+          <button
+            onClick={handleLikeClick}
+            className={`flex items-center text-sm transition ${
+              likedByUser ? "text-red-500" : "text-stone-400 hover:text-red-500"
+            }`}
+          >
+            <Heart
+              className="w-3 h-3 mr-2"
+              fill={likedByUser ? "red" : "none"}
+            />
+            <span>
+              {likesCount} Like{likesCount !== 1 && "s"}
+            </span>
           </button>
-          <button className="flex items-center text-stone-400 hover:text-red-500 transition text-sm">
-            <Trash2 className="w-3 h-3 mr-2" />
-            <span>Delete</span>
-          </button>
+          {canDelete && (
+            <button
+              onClick={handleDeleteClick}
+              className="flex items-center text-stone-400 hover:text-red-500 transition text-sm"
+            >
+              <Trash2 className="w-3 h-3 mr-2" />
+              <span>Delete</span>
+            </button>
+          )}
         </div>
       </div>
     );

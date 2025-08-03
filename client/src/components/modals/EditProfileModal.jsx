@@ -1,15 +1,52 @@
 import React, { useState } from "react";
 import { X } from "lucide-react";
+import axios from "axios";
+import { useUser } from "../../context/UserContext";
+import {toast} from "react-hot-toast"
 const EditProfileModal = ({ isOpen, onClose, initialData, onSave }) => {
-  const [fullName, setFullName] = useState(initialData.fullName || "");
+  const [fullname, setFullName] = useState(initialData.fullname || "");
   const [bio, setBio] = useState(initialData.bio || "");
   const [website, setWebsite] = useState(initialData.website || "");
+ const [location, setLocation] = useState(initialData.location || "");
+ const [avatar, setAvatar] = useState(initialData.picture || "");
+  const { user, fetchUser } = useUser();
+ 
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave({ fullName, bio, website });
-    
-  };
+   try {
+     const token = localStorage.getItem("authToken");
+
+     const res = await axios.put(
+       `${import.meta.env.VITE_API_URI}/edituser/${user._id}`,
+       {
+         fullname,
+         bio,
+         website,
+         location,
+         avatar, 
+        
+       },
+       {
+         headers: {
+           Authorization: `Bearer ${token}`,
+         },
+       }
+     );
+
+     if (res.data.success) {
+       toast.success("Profile updated successfully");
+       fetchUser();  
+       onClose(); 
+      
+     } else {
+       toast.error("Update failed");
+     }
+   } catch (err) {
+     console.error("Edit error", err.message);
+     toast.error("Something went wrong");
+   }
+ };
 
   if (!isOpen) return null;
 
@@ -19,7 +56,7 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSave }) => {
       onClick={onClose}
     >
       <div
-        className=" border border-stone-700 rounded-2xl p-8 w-full max-w-md text-white shadow-xl relative bg-stone-950 max-sm:bg-black" 
+        className=" border border-stone-700 rounded-2xl p-8 w-full max-w-md text-white shadow-xl relative bg-stone-950 max-sm:bg-black"
         onClick={(e) => e.stopPropagation()}
       >
         <X
@@ -29,18 +66,16 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSave }) => {
         <h2 className="text-[1.2em] font-semibold mb-4">Edit Profile</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Full Name */}
           <div className="">
             <label className="text-md text-stone-400">Full Name</label>
             <input
               type="text"
-              value={fullName}
+              value={fullname}
               onChange={(e) => setFullName(e.target.value)}
               className="w-full mt-1 px-3 py-1.5  text-sm rounded-lg bg-stone-800 border border-stone-600 focus:outline-none"
             />
           </div>
 
-          {/* Bio */}
           <div>
             <label className="text-md text-stone-400">Bio</label>
             <textarea
@@ -51,7 +86,6 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSave }) => {
             />
           </div>
 
-          {/* Website */}
           <div>
             <label className="text-md text-stone-400">Website</label>
             <input
@@ -61,12 +95,31 @@ const EditProfileModal = ({ isOpen, onClose, initialData, onSave }) => {
               className="w-full mt-1 px-3 py-1.5 text-sm rounded-lg bg-stone-800 border border-stone-600 focus:outline-none"
             />
           </div>
+          <div>
+            <label className="text-md text-stone-400">Location</label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              className="w-full mt-1 px-3 py-1.5 text-sm rounded-lg bg-stone-800 border border-stone-600 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="text-md text-stone-400">Avatar URL</label>
+            <input
+              type="url"
+              value={avatar}
+              onChange={(e) => setAvatar(e.target.value)}
+              className="w-full mt-1 px-3 py-1.5 text-sm rounded-lg bg-stone-800 border border-stone-600 focus:outline-none"
+            />
+          </div>
 
           {/* Buttons */}
           <div className="flex justify-end space-x-3 mt-6">
             <button
               type="submit"
-              onClick={onClose}
+             
               className="px-4 py-2 text-sm rounded-md bg-blue-600 hover:bg-blue-700"
             >
               Update

@@ -54,7 +54,23 @@ const token = localStorage.getItem("authToken");
        setOwnPostsLoading(false);
      }
    };
-
+const deletePost = async (postId) => {
+  const token = localStorage.getItem("authToken");
+  try {
+     await axios.delete(
+      `${import.meta.env.VITE_API_URI}/deletepost/${postId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to delete post:", err);
+    return { success: false };
+  }
+};
   useEffect(() => {
     fetchPosts();
    
@@ -70,6 +86,7 @@ const token = localStorage.getItem("authToken");
         myPosts,
         setMyPosts,
         fetchOwnPosts,
+        deletePost
       }}
     >
       {children}
