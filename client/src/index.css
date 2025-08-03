@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+
+.pointer {
+  @apply cursor-pointer;
+}
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #333336;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1c1917; 
+}
